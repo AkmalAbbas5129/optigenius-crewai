@@ -173,7 +173,7 @@ with col1:
 
         # Output box
         # st.write("Final Answer:", result)
-        st.markdown('```'+result+'````')
+        st.markdown('```'+str(result)+'````')
 
 
 # Clear button
