@@ -160,8 +160,8 @@ with col1:
             result = analysis_crew.kickoff()
 
         # Output box
-        st.markdown("### Final Answer:")
-        st.markdown(result)
+        # st.markdown("### Final Answer:")
+        # st.markdown(result)
 
         # Styled Output
         st.markdown("---")
