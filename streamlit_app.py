@@ -166,7 +166,10 @@ with col1:
         result = analysis_crew.kickoff()
         # print(result)
 
-        os.remove('trained_agents_data.pkl')
+        try:
+            os.remove('trained_agents_data.pkl')
+        except Exception as ex:
+            print("Exception occured")
 
         # Output box
         # st.write("Final Answer:", result)
