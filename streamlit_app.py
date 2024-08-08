@@ -146,15 +146,18 @@ report_task = Task(
 # Submit button
 with col1:
     if st.button("Submit"):
-        # Create a crew and add the task
-        analysis_crew = Crew(
-            agents=[coding_agent, report_agent],
-            tasks=[cli_task, report_task],
-            process=Process.sequential,
-        )
+        with st.spinner("OptiGenius is finding the solution..."):
+            st.toast("OptiGenius is finding the solution...")
 
-        # Execute the crew
-        result = analysis_crew.kickoff()
+            # Create a crew and add the task
+            analysis_crew = Crew(
+                agents=[coding_agent, report_agent],
+                tasks=[cli_task, report_task],
+                process=Process.sequential,
+            )
+
+            # Execute the crew
+            result = analysis_crew.kickoff()
 
         # Output box
         st.markdown("### Final Answer:")
