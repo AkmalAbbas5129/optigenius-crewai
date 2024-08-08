@@ -169,7 +169,7 @@ with col1:
         try:
             os.remove('trained_agents_data.pkl')
         except Exception as ex:
-            st.write("An exception has occurred:", ex)
+            print("An exception has occurred:", ex)
 
 # Clear button
 with col2:
