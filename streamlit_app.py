@@ -178,4 +178,4 @@ with col1:
 with col2:
     if st.button("Clear"):
         # Clear the input field (refresh the page)
-        st.experimental_rerun()
+        st.rerun()
