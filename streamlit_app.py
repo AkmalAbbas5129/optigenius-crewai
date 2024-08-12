@@ -92,16 +92,19 @@ st.sidebar.markdown(
 # Description about the app
 st.write("OptiGenius, a multi-agent system powered by CrewAI and Streamlit. It uses a multi-agentic approach and code execution tools incorporated in CrewAI to solve Resource Optimization Problems.")
 
-# Example section
-st.markdown("### Examples")
-examples = {
-    "Transportation Problem": "Minimize the transportation cost from multiple sources to multiple destinations with supply and demand constraints.",
-    "Knapsack Problem": "Maximize the total value of items that can be put in a knapsack without exceeding its capacity.",
-    "Production Planning": "Optimize the production schedule to minimize costs while meeting demand and not exceeding production capacity."
-}
-
-example_choice = st.selectbox("Choose an example:", list(examples.keys()))
-st.write(f"**Example Description:** {examples[example_choice]}")
+# Examples section in an expander
+with st.expander("See Examples"):
+    st.write("### Example 1: Fly High Airlines Optimization Problem")
+    st.write("""
+    **Problem Statement:**\n
+    Fly High Airlines sells business class and tourist class seats for its charter flights. To charter a plane, at least 5 Business class tickets must be sold and at least 9 tourist class tickets must be sold. The plane does not hold more than 30 passengers. Fly-High makes $40 profit for each business class ticket sold and $45 profit for each tourist class ticket sold. For Fly-High Airlines to maximize profits, how many tourists class seats should they sell?\n
+    **Objective:**\n
+    How many tourist class seats should they sell to maximize the profits?\n
+    **Constraints:**\n
+    - Plane does not hold more than 30 passengers.\n
+    - To charter a plane, at least 5 business class tickets must be sold.\n
+    - At least 9 tourist class tickets must be sold.
+    """)
 
 # Text input field
 user_input = st.text_area("Enter Problem Statement:")
