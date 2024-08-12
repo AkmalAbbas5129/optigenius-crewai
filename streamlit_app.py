@@ -92,6 +92,17 @@ st.sidebar.markdown(
 # Description about the app
 st.write("OptiGenius, a multi-agent system powered by CrewAI and Streamlit. It uses a multi-agentic approach and code execution tools incorporated in CrewAI to solve Resource Optimization Problems.")
 
+# Example section
+st.markdown("### Examples")
+examples = {
+    "Transportation Problem": "Minimize the transportation cost from multiple sources to multiple destinations with supply and demand constraints.",
+    "Knapsack Problem": "Maximize the total value of items that can be put in a knapsack without exceeding its capacity.",
+    "Production Planning": "Optimize the production schedule to minimize costs while meeting demand and not exceeding production capacity."
+}
+
+example_choice = st.selectbox("Choose an example:", list(examples.keys()))
+st.write(f"**Example Description:** {examples[example_choice]}")
+
 # Text input field
 user_input = st.text_area("Enter Problem Statement:")
 
