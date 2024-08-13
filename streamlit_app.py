@@ -108,7 +108,7 @@ coding_agent = Agent(
     verbose=True,
     tools=[coding_agent_tool],
     allow_code_execution=True,
-    llm=azure_llm
+    # llm=azure_llm
 )
 
 # Task for solving the optimization problem
