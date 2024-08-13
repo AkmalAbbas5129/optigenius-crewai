@@ -11,8 +11,8 @@ import streamlit as st
 import base64
 
 # Getting Environment Variables
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 os.environ["AZURE_OPENAI_API_KEY"] = st.secrets["openai_api_key"]
 os.environ["AZURE_OPENAI_ENDPOINT"] = st.secrets["azure_endpoint"]
