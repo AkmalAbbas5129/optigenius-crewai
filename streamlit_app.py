@@ -157,22 +157,42 @@ with col1:
     if st.button("Submit"):
         # Create a crew and add the task
         analysis_crew = Crew(
-            agents=[coding_agent,report_agent],
-            tasks=[cli_task,report_task],
+            agents=[coding_agent, report_agent],
+            tasks=[cli_task, report_task],
             process=Process.sequential,
         )
 
         # Execute the crew
         result = analysis_crew.kickoff()
-        # print(result)
+
         try:
             os.remove('trained_agents_data.pkl')
         except Exception as ex:
-            print("Exception has occured")
+            print("Exception has occurred")
 
-        # Output box
-        # st.write("Final Answer:", result)
-        st.markdown('```'+str(result)+'````')
+        # Displaying the result in a stylized way
+        st.markdown("## :rocket: Final Answer")
+        
+        # Expander for Problem Statement
+        with st.expander("Problem Statement"):
+            st.markdown(f"**Problem Statement:**\n\n{result.get('Problem Statement', 'N/A')}")
+
+        # Expander for Constraints
+        with st.expander("Constraints"):
+            st.markdown(f"**Constraints:**\n\n{result.get('Constraints', 'N/A')}")
+
+        # Expander for Optimization Answer
+        with st.expander("Optimization Answer"):
+            st.markdown(f"**Optimization Answer:**\n\n{result.get('Optimization Answer', 'N/A')}")
+
+        # Expander for Conclusion
+        with st.expander("Conclusion"):
+            st.markdown(f"**Conclusion:**\n\n{result.get('Conclusion', 'N/A')}")
+        
+        # If there is any code, show it in a highlighted format
+        if 'code' in result:
+            st.markdown("### :computer: Code")
+            st.code(result['code'], language='python')
 
 
 # Clear button
