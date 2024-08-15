@@ -218,7 +218,7 @@ coding_agent_tool = Tool(
 )
 
 # Set the layout to wide
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 
 # Custom CSS to adjust the width of the markdown container
 st.markdown(
