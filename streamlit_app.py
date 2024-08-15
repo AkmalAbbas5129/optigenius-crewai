@@ -24,6 +24,7 @@ os.environ["OPENAI_MODEL_NAME"]="gpt-35-turbo-16k"
 azure_llm = AzureChatOpenAI(
     openai_api_version=st.secrets["api_version"],
     azure_deployment=st.secrets["deployment_name"],
+    model="gpt-35-turbo-16k"
 )
 
 # Initialize Python REPL tool
