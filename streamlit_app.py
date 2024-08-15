@@ -14,18 +14,7 @@ import base64
 from dotenv import load_dotenv
 load_dotenv()
 
-os.environ["AZURE_OPENAI_API_KEY"] = st.secrets["openai_api_key"]
-os.environ["AZURE_OPENAI_ENDPOINT"] = st.secrets["azure_endpoint"]
-os.environ["AZURE_OPENAI_API_VERSION"] = st.secrets["api_version"]
-os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"] = st.secrets["deployment_name"]
-os.environ["OPENAI_MODEL_NAME"]="gpt-35-turbo-16k"
 
-# Initialize Azure OpenAI LLM
-azure_llm = AzureChatOpenAI(
-    openai_api_version=st.secrets["api_version"],
-    azure_deployment=st.secrets["deployment_name"],
-    model="gpt-35-turbo-16k"
-)
 
 # Initialize Python REPL tool
 python_repl = PythonREPL()
@@ -157,42 +146,24 @@ with col1:
     if st.button("Submit"):
         # Create a crew and add the task
         analysis_crew = Crew(
-            agents=[coding_agent, report_agent],
-            tasks=[cli_task, report_task],
+            agents=[coding_agent,report_agent],
+            tasks=[cli_task,report_task],
             process=Process.sequential,
         )
 
         # Execute the crew
         result = analysis_crew.kickoff()
-
+        # print(result)
         try:
             os.remove('trained_agents_data.pkl')
         except Exception as ex:
-            print("Exception has occurred")
+            print("Exception has occured")
 
-        # Displaying the result in a stylized way
-        st.markdown("## :rocket: Final Answer")
+        # Output box
+        # st.write("Final Answer:", result)
         
-        # Expander for Problem Statement
-        with st.expander("Problem Statement"):
-            st.markdown(f"**Problem Statement:**\n\n{result.get('Problem Statement', 'N/A')}")
-
-        # Expander for Constraints
-        with st.expander("Constraints"):
-            st.markdown(f"**Constraints:**\n\n{result.get('Constraints', 'N/A')}")
-
-        # Expander for Optimization Answer
-        with st.expander("Optimization Answer"):
-            st.markdown(f"**Optimization Answer:**\n\n{result.get('Optimization Answer', 'N/A')}")
-
-        # Expander for Conclusion
-        with st.expander("Conclusion"):
-            st.markdown(f"**Conclusion:**\n\n{result.get('Conclusion', 'N/A')}")
-        
-        # If there is any code, show it in a highlighted format
-        if 'code' in result:
-            st.markdown("### :computer: Code")
-            st.code(result['code'], language='python')
+        with st.expander("See explanation"):
+            st.markdown('```'+str(result)+'````')
 
 
 # Clear button
