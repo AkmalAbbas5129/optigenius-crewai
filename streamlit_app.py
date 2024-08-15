@@ -6,11 +6,11 @@ from crewai import Agent, Task, Crew, Process
 from langchain_core.tools import Tool
 from langchain_experimental.utilities import PythonREPL
 
-### Streamlit Dependable Libraries
+###Streamlit Dependable Libraries
 import streamlit as st
 import base64
 
-# Getting Environment Variables
+# GEtting Environement Variables
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -18,11 +18,13 @@ os.environ["AZURE_OPENAI_API_KEY"] = st.secrets["openai_api_key"]
 os.environ["AZURE_OPENAI_ENDPOINT"] = st.secrets["azure_endpoint"]
 os.environ["AZURE_OPENAI_API_VERSION"] = st.secrets["api_version"]
 os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"] = st.secrets["deployment_name"]
+os.environ["OPENAI_MODEL_NAME"]="gpt-35-turbo-16k"
 
 # Initialize Azure OpenAI LLM
 azure_llm = AzureChatOpenAI(
     openai_api_version=st.secrets["api_version"],
     azure_deployment=st.secrets["deployment_name"],
+    model="gpt-35-turbo-16k"
 )
 
 # Initialize Python REPL tool
@@ -32,6 +34,7 @@ coding_agent_tool = Tool(
     description="A Python shell. Use this to execute python commands. Input should be a valid python command in Python REPL dictionary format. If you want to see the output of a value, you should print it out with `print(...)`.",
     func=python_repl.run,
 )
+
 
 # Set the layout to wide
 st.set_page_config(layout="wide")
@@ -48,6 +51,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 # Function to convert image to base64
 def get_image_base64(image_path):
@@ -90,24 +94,14 @@ st.sidebar.markdown(
 )
 
 # Description about the app
-st.write("OptiGenius, a multi-agent system powered by CrewAI and Streamlit. It uses a multi-agentic approach and code execution tools incorporated in CrewAI to solve Resource Optimization Problems.")
-
-# Example section
-st.markdown("### Examples")
-examples = {
-    "Transportation Problem": "Minimize the transportation cost from multiple sources to multiple destinations with supply and demand constraints.",
-    "Knapsack Problem": "Maximize the total value of items that can be put in a knapsack without exceeding its capacity.",
-    "Production Planning": "Optimize the production schedule to minimize costs while meeting demand and not exceeding production capacity."
-}
-
-example_choice = st.selectbox("Choose an example:", list(examples.keys()))
-st.write(f"**Example Description:** {examples[example_choice]}")
+st.write("OptiGenius, a multi-agent systems powered by CrewAI and Streamlit. It uses multi-agentic approach and code execution tools incorporated in CrewAI to solve Resource Optimization Problems.")
 
 # Text input field
 user_input = st.text_area("Enter Problem Statement:")
 
 # Create two columns for the buttons
 col1, col2 = st.columns(2)
+
 
 ### Create an agent with code execution enabled
 coding_agent = Agent(
@@ -121,11 +115,15 @@ coding_agent = Agent(
     llm=azure_llm
 )
 
+# # Problem statement for the optimization problem
+# problem_statement = """A snack bar cooks and sells hamburgers and hot dogs during football games. To stay in business, it must sell at least 10 hamburgers but can not cook more than 40. It must also sell at least 30 hot dogs, but can not cook more than 70. The snack bar can not cook more than 90 items total. The profit on a hamburger is 33 cents, and the profit on a hot dog is 21 cents. How many of each item should it sell to make the maximum profit?"""
+
 # Task for solving the optimization problem
 cli_task = Task(
     description=user_input,
     agent=coding_agent,
     expected_output='Desired output in python formatted context',
+    # llm=azure_llm
 )
 
 report_agent = Agent(
@@ -142,51 +140,43 @@ report_task = Task(
     description="""Generate a concise report based on the previous given solution with the following headings:
     1. Problem Statement
     2. Constraints
-    3. Optimization Answer
-    4. Conclusion
+    2. Optimization Answer
+    3. Conclusion
     """,
     agent=report_agent,
-    expected_output='''A structured report in markdown format of the solution with the following headings as a Final Answer:
+    expected_output='''A structured report in markdown format of the solution with the following headings as an Final Answer:
 
     1. Problem Statement
     2. Constraints
-    3. Optimization Answer
-    4. Conclusion'''
+    2. Optimization Answer
+    3. Conclusion'''
 )
 
 # Submit button
 with col1:
     if st.button("Submit"):
-        with st.spinner("OptiGenius is finding the solution..."):
-            st.toast("OptiGenius is finding the solution...")
+        # Create a crew and add the task
+        analysis_crew = Crew(
+            agents=[coding_agent,report_agent],
+            tasks=[cli_task,report_task],
+            process=Process.sequential,
+        )
 
-            # Create a crew and add the task
-            analysis_crew = Crew(
-                agents=[coding_agent, report_agent],
-                tasks=[cli_task, report_task],
-                process=Process.sequential,
-            )
-
-            # Execute the crew
-            result = analysis_crew.kickoff()
-
-        # Output box
-        # st.markdown("### Final Answer:")
-        # st.markdown(result)
-
-        # Styled Output
-        st.markdown("---")
-        st.markdown("### Detailed Report")
-        st.markdown(result, unsafe_allow_html=True)
-
-        # Try to remove the saved data file if it exists
+        # Execute the crew
+        result = analysis_crew.kickoff()
+        # print(result)
         try:
             os.remove('trained_agents_data.pkl')
         except Exception as ex:
-            print("An exception has occurred:", ex)
+            print("Exception has occured")
+
+        # Output box
+        # st.write("Final Answer:", result)
+        st.markdown('```'+result+'````')
+
 
 # Clear button
 with col2:
     if st.button("Clear"):
         # Clear the input field (refresh the page)
-        st.rerun()
+        st.experimental_rerun()
