@@ -155,8 +155,16 @@ report_task = Task(
 # Submit button
 with col1:
     if st.button("Submit"):
+        # Initialize progress bar
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+
         # Display a spinner while the solution is being generated
         with st.spinner("Processing your request... Please wait."):
+            # Update the status for initializing the agent
+            progress_bar.progress(10)
+            status_text.markdown("**Initializing agents...**")
+
             # Create a crew and add the task
             analysis_crew = Crew(
                 agents=[coding_agent, report_agent],
@@ -164,13 +172,25 @@ with col1:
                 process=Process.sequential,
             )
 
+            # Update the status for starting the task
+            progress_bar.progress(30)
+            status_text.markdown("**Starting task execution...**")
+
             # Execute the crew
             result = analysis_crew.kickoff()
-            # print(result)
+
+            # Update the status during task execution
+            progress_bar.progress(70)
+            status_text.markdown("**Generating solution...**")
+
             try:
                 os.remove('trained_agents_data.pkl')
             except Exception as ex:
                 print("Exception has occurred")
+
+            # Update the status when the task is complete
+            progress_bar.progress(100)
+            status_text.markdown("**Task completed successfully!**")
 
         # Display the result in a styled container
         st.markdown("## 🧠 Optimization Solution")
