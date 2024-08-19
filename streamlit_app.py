@@ -14,13 +14,13 @@ os.environ["AZURE_OPENAI_API_KEY"] = st.secrets["openai_api_key"]
 os.environ["AZURE_OPENAI_ENDPOINT"] = st.secrets["azure_endpoint"]
 os.environ["AZURE_OPENAI_API_VERSION"] = st.secrets["api_version"]
 os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"] = st.secrets["deployment_name"]
-os.environ["OPENAI_MODEL_NAME"]="gpt-35-turbo-16k"
+os.environ["OPENAI_MODEL_NAME"]="gpt-4o"
 
 # Initialize Azure OpenAI LLM
 azure_llm = AzureChatOpenAI(
     openai_api_version=st.secrets["api_version"],
     azure_deployment=st.secrets["deployment_name"],
-    model="gpt-35-turbo-16k"
+    model="gpt-4o"
 )
 
 # Initialize Python REPL tool
