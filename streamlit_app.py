@@ -158,6 +158,7 @@ with col1:
         # Initialize progress bar
         progress_bar = st.progress(0)
         status_text = st.empty()
+        output_text = st.empty()
 
         # Display a spinner while the solution is being generated
         with st.spinner("Processing your request... Please wait."):
@@ -172,12 +173,13 @@ with col1:
                 process=Process.sequential,
             )
 
-            # Update the status for starting the task
-            progress_bar.progress(30)
-            status_text.markdown("**Starting task execution...**")
+            # Define a function to capture and display agent output in real-time
+            def stream_output(agent_output):
+                output_text.markdown(f"**Agent Output:**\n\n{agent_output}")
+                progress_bar.progress(50)  # Update progress based on task completion
 
-            # Execute the crew
-            result = analysis_crew.kickoff()
+            # Execute the crew with output streaming
+            result = analysis_crew.kickoff(callback=stream_output)
 
             # Update the status during task execution
             progress_bar.progress(70)
@@ -192,7 +194,7 @@ with col1:
             progress_bar.progress(100)
             status_text.markdown("**Task completed successfully!**")
 
-        # Display the result in a styled container
+        # Display the final result in a styled container
         st.markdown("## 🧠 Optimization Solution")
         st.markdown(
             """
@@ -202,13 +204,14 @@ with col1:
                 border-radius: 10px;
                 box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
             ">
-                <h3 style="color: #2c3e50;">Result:</h3>
+                <h3 style="color: #2c3e50;">Final Result:</h3>
                 <p style="font-size: 16px; color: #34495e;">
                     {}</p>
             </div>
             """.format(result),
             unsafe_allow_html=True
         )
+
 
 
 # Clear button
