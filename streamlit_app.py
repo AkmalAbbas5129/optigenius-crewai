@@ -155,24 +155,40 @@ report_task = Task(
 # Submit button
 with col1:
     if st.button("Submit"):
-        # Create a crew and add the task
-        analysis_crew = Crew(
-            agents=[coding_agent,report_agent],
-            tasks=[cli_task,report_task],
-            process=Process.sequential,
+        # Display a spinner while the solution is being generated
+        with st.spinner("Processing your request... Please wait."):
+            # Create a crew and add the task
+            analysis_crew = Crew(
+                agents=[coding_agent, report_agent],
+                tasks=[cli_task, report_task],
+                process=Process.sequential,
+            )
+
+            # Execute the crew
+            result = analysis_crew.kickoff()
+            # print(result)
+            try:
+                os.remove('trained_agents_data.pkl')
+            except Exception as ex:
+                print("Exception has occurred")
+
+        # Display the result in a styled container
+        st.markdown("## 🧠 Optimization Solution")
+        st.markdown(
+            """
+            <div style="
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            ">
+                <h3 style="color: #2c3e50;">Result:</h3>
+                <p style="font-size: 16px; color: #34495e;">
+                    {}</p>
+            </div>
+            """.format(result),
+            unsafe_allow_html=True
         )
-
-        # Execute the crew
-        result = analysis_crew.kickoff()
-        # print(result)
-        try:
-            os.remove('trained_agents_data.pkl')
-        except Exception as ex:
-            print("Exception has occured")
-
-        # Output box
-        # st.write("Final Answer:", result)
-        st.markdown('```'+str(result)+'````')
 
 
 # Clear button
