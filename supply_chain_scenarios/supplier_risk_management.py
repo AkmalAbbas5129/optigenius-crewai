@@ -32,5 +32,4 @@ def generate_supplier_risk_predictions():
     return predictions
 
 
-if __name__ == "__main__":
-    print(generate_supplier_risk_predictions())
+print(generate_supplier_risk_predictions())
