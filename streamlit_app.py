@@ -105,7 +105,7 @@ if scenario:
     code = st.session_state.get("code", "")
     # report_area = st.text_area("Report", report, height=300)
     st.code(code, language='python')
-    st.subheader("Code")
+    st.subheader("Optimization Report")
     st.markdown(
         """
         <div style="
