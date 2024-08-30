@@ -48,7 +48,7 @@ class AgentState(TypedDict):
 
 def generate_pulp_code_for_problem(state: AgentState) -> AgentState:
     sys_prompt = """
-    Act as a Python developer. Write a code to solve optimization task using Gurobi library.
+    Act as a Python developer. Write a code to solve optimization task using PuLP library.
     Must ensure that the code is properly formatted and wrapped according to Python REPL executor.
     Only use variables defined in the code and make sure there is no syntax/logical errors.
     Always recheck the code to fix error. 
@@ -135,7 +135,7 @@ def report_writer(state: AgentState) -> AgentState:
     You are an expert in writing reports in such a way that any one who reads it can easily understand it.
     Please use proper formatting and easy to understand vocabulary to write a report.
     
-    One of your sub ordinate has received an optimization problem and he has used the Gurobi library to 
+    One of your sub ordinate has received an optimization problem and he has used the PuLP library to 
     solve the optimization problem. Now he is giving you the optimization problem, problem statement, objective and 
     constraints. Also he has given you the execution result of the code. 
     
@@ -203,7 +203,7 @@ class CodeReviewGrade(BaseModel):
 def code_reviewer(state: AgentState) -> AgentState:
     system = """
     You are an expert in python code reviewer. I will give you a code which is solving an optimization
-    problem using python and Gurobi library. 
+    problem using python and PuLP library. 
     
     Please review the code and check that if the code 
     
