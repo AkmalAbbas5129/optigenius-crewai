@@ -11,7 +11,7 @@ os.environ["AZURE_OPENAI_API_KEY"] = st.secrets["openai_api_key"]
 os.environ["AZURE_OPENAI_ENDPOINT"] = st.secrets["azure_endpoint"]
 os.environ["AZURE_OPENAI_API_VERSION"] = st.secrets["api_version"]
 os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"] = st.secrets["deployment_name"]
-os.environ["OPENAI_MODEL_NAME"]="gpt-4o"
+os.environ["OPENAI_MODEL_NAME"] = "gpt-4o"
 
 # Initialize Azure OpenAI LLM
 azure_llm = AzureChatOpenAI(
@@ -29,9 +29,6 @@ class AgentState(TypedDict):
     python_pulp_code: str  # Code in python pulp
     optimization_answer: str  # Answer to the statement
     report: str  # Report
-
-
-
 
 
 # """
@@ -54,14 +51,14 @@ def generate_pulp_code_for_problem(state: AgentState) -> AgentState:
     Always recheck the code to fix error. 
     If there is an error arise in your code i will fine you 1000$ and will sue you.
     Just output code and nothing else.
-    
+
     Following is the optimization task:
     Optimization Task:
     {optimization_task}
-    
+
     Problem Statement, Objective, Constraint:
     {problem_statement}
-    
+
     Code:
     [Write code here]
     """
@@ -135,27 +132,27 @@ def report_writer(state: AgentState) -> AgentState:
     You are an expert in writing reports in such a way that any one who reads it can easily understand it.
     Please use proper formatting and easy to understand vocabulary to write a report. Always use plain english and 
     not use any latex or other expressions to show calculations.
-    
+
     One of your sub ordinate has received an optimization problem and he has used the PuLP library to 
     solve the optimization problem. Now he is giving you the optimization problem, problem statement, objective and 
     constraints. Also he has given you the execution result of the code. 
-    
+
     1. In report explain the Given data and what is intended by the given data
     2. Explain the solution and calculations.
     3. Write Conclusion with respect to objective by explaining problem statement and constraints.
     4. Give suggestions as an expert.
-    
+
     Please write a report according to following.
-    
+
     Optimization Problem:
     {optimization}
-    
+
     Problem Statements,Objective and Constraint:
     {problem}
-    
+
     Result of Code Execution according to problem:
     {code_execution_result}
-    
+
     Report:
     [Write report here to show beautifully compatible in markdown format]
     """
@@ -205,20 +202,20 @@ def code_reviewer(state: AgentState) -> AgentState:
     system = """
     You are an expert in python code reviewer. I will give you a code which is solving an optimization
     problem using python and PuLP library. 
-    
+
     Please review the code and check that if the code 
-    
+
     1. includes all the relevant libraries.
     2. No syntax error in it.
     3. No logical error in it.
     5. Proper print statements are used to output.
-    
+
     Provide a binary score 'yes' or 'no' to indicate if the code is reviewed or not."""
 
     human_message = """    
     Code:
     {code}
-    
+
     Binary Score:
     """
     grade_prompt = ChatPromptTemplate.from_messages(
@@ -241,7 +238,8 @@ def code_reviewer(state: AgentState) -> AgentState:
     )
     print(f"\nScore: {result.binary_score}\n")
     if result.binary_score == "yes":
-        return "code_executor"
+        # return "code_executor"
+        return "code_fixer"
     else:
         # print("---" * 50)
         # print(code)
@@ -270,10 +268,10 @@ def fix_code(state: AgentState) -> AgentState:
     human_message = """
     Optimization task:
     {task}
-    
+
     Problem Statement,Objective and Constraint:
     {problem}
-    
+
     Answer:
     """
 
@@ -348,7 +346,7 @@ def get_graph():
     workflow.add_edge("code_writer", "evaluator_node")
     # workflow.add_edge("code_writer", "code_executor")
     workflow.add_conditional_edges(
-        "evaluator_node", code_reviewer, {"code_executor": "code_executor", "code_fixer": "code_fixer"}
+        "evaluator_node", code_reviewer, {"code_executor": "code_fixer", "code_fixer": "code_fixer"}
     )
 
     workflow.add_edge("code_fixer", "expert_report_writer")
@@ -363,7 +361,7 @@ def custom_order_fulfillment(secnario, problem_statement):
     initial_state = {"problem_statement": problem_statement,
                      "optimization_task": secnario}
     result = graph.invoke(initial_state)
-    return result["report"]
+    return result["report"], result["python_pulp_code"]
 
 
 def demand_supply_matching(secnario, problem_statement):
@@ -371,7 +369,7 @@ def demand_supply_matching(secnario, problem_statement):
     initial_state = {"problem_statement": problem_statement,
                      "optimization_task": secnario}
     result = graph.invoke(initial_state)
-    return result["report"]
+    return result["report"], result["python_pulp_code"]
 
 
 def supplier_risk_optimization(secnario, problem_statement):
@@ -379,7 +377,7 @@ def supplier_risk_optimization(secnario, problem_statement):
     initial_state = {"problem_statement": problem_statement,
                      "optimization_task": secnario}
     result = graph.invoke(initial_state)
-    return result["report"]
+    return result["report"], result["python_pulp_code"]
 
 
 def demand_forecasting_optimization(secnario, problem_statement):
@@ -387,21 +385,22 @@ def demand_forecasting_optimization(secnario, problem_statement):
     initial_state = {"problem_statement": problem_statement,
                      "optimization_task": secnario}
     result = graph.invoke(initial_state)
-    return result["report"]
+    return result["report"], result["python_pulp_code"]
 
 
 def generate_report_for_scenario(scenario, problem_statement):
     report = "Default Report"
+    code = "Defaul Code"
     if scenario == "Customer Order Fulfillment":
-        report = custom_order_fulfillment(scenario,problem_statement)
+        report, code = custom_order_fulfillment(scenario, problem_statement)
     elif scenario == "Demand-Supply Matching":
-        report = demand_supply_matching(scenario,problem_statement)
+        report, code = demand_supply_matching(scenario, problem_statement)
     elif scenario == "Supplier Risk Assessment":
-        report = supplier_risk_optimization(scenario,problem_statement)
+        report, code = supplier_risk_optimization(scenario, problem_statement)
     elif scenario == "Demand Forecasting":
-        report = supplier_risk_optimization(scenario,problem_statement)
+        report, code = supplier_risk_optimization(scenario, problem_statement)
 
-    return report
+    return report, code
 
 
 if __name__ == "__main__":
