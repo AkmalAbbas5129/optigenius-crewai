@@ -346,7 +346,7 @@ def get_graph():
     workflow.add_edge("code_writer", "evaluator_node")
     # workflow.add_edge("code_writer", "code_executor")
     workflow.add_conditional_edges(
-        "evaluator_node", code_reviewer, {"code_executor": "code_fixer", "code_fixer": "code_fixer"}
+        "evaluator_node", code_reviewer, {"code_executor": "code_executor", "code_fixer": "code_fixer"}
     )
 
     workflow.add_edge("code_fixer", "expert_report_writer")
