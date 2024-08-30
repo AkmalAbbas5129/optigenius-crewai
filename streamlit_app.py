@@ -100,11 +100,11 @@ if scenario:
     st.subheader("Generated Problem Statement")
     problem_statement_area = st.text_area("Problem Statement", problem_statement, height=300)
 
-    st.subheader("Code")
+    
     report = st.session_state.get("report", "")
     code = st.session_state.get("code", "")
     # report_area = st.text_area("Report", report, height=300)
-    st.code(code, language='python')
+    
     st.subheader("Optimization Report")
     st.markdown(
         """
@@ -120,6 +120,9 @@ if scenario:
         """.format(str(report)),
         unsafe_allow_html=True
     )
+
+    st.subheader("Code")
+    st.code(code, language='python')
 
     
 
