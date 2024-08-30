@@ -133,7 +133,8 @@ def code_executor(state: AgentState) -> AgentState:
 def report_writer(state: AgentState) -> AgentState:
     sys_prompt = """
     You are an expert in writing reports in such a way that any one who reads it can easily understand it.
-    Please use proper formatting and easy to understand vocabulary to write a report.
+    Please use proper formatting and easy to understand vocabulary to write a report. Always use plain english and 
+    not use any latex or other expressions to show calculations.
     
     One of your sub ordinate has received an optimization problem and he has used the PuLP library to 
     solve the optimization problem. Now he is giving you the optimization problem, problem statement, objective and 
