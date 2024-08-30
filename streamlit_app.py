@@ -101,6 +101,21 @@ if scenario:
     st.subheader("Generated Report")
     report = st.session_state.get("report", "This is the generated report based on the scenario and predictions.")
     report_area = st.text_area("Report", report, height=300)
+    st.markdown(
+            """
+            <div style="
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            ">
+                <h3 style="color: #2c3e50;">Result:</h3>
+                <p style="font-size: 16px; color: #34495e;">
+                    {}</p>
+            </div>
+            """.format(str(report)),
+            unsafe_allow_html=True
+        )
 
     # Button to trigger optimization (generating the report)
     if st.button("Optimize"):
