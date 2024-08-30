@@ -100,11 +100,12 @@ if scenario:
     st.subheader("Generated Problem Statement")
     problem_statement_area = st.text_area("Problem Statement", problem_statement, height=300)
 
-    st.subheader("Generated Report")
+    st.subheader("Code")
     report = st.session_state.get("report", "")
     code = st.session_state.get("code", "")
     # report_area = st.text_area("Report", report, height=300)
     st.code(code, language='python')
+    st.subheader("Code")
     st.markdown(
         """
         <div style="
@@ -113,7 +114,6 @@ if scenario:
             border-radius: 10px;
             box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
         ">
-            <h3 style="color: #2c3e50;">Result:</h3>
             <p style="font-size: 16px; color: #34495e;">
                 {}</p>
         </div>
