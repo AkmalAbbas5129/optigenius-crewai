@@ -10,3 +10,6 @@ streamlit
 crewai
 crewai_tools
 python-dotenv
+langgraph
+pyautogen
+gurobipy
