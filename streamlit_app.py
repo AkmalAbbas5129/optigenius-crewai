@@ -1,6 +1,6 @@
 import streamlit as st
 import time
-from utils import generate_data_info_in_natural_language,generate_optimization
+from utils import generate_data_info_in_natural_language, generate_optimization
 from supply_chain_scenarios.custom_order_fullfilment import generate_customer_order_fulfillment_predictions
 from supply_chain_scenarios.demand_supply_matching import generate_demand_supply_matching_predictions
 from supply_chain_scenarios.supplier_risk_management import generate_supplier_risk_predictions
@@ -61,7 +61,7 @@ with st.sidebar:
     # Scenario Dropdown
     scenario = st.selectbox(
         "Select Scenario:",
-        ["", "Customer Order Fulfillment", "Demand-Supply Matching", "Supplier Risk Assessment","Demand Forecasting"],
+        ["", "Customer Order Fulfillment", "Demand-Supply Matching", "Supplier Risk Assessment", "Demand Forecasting"],
         key="scenario"
     )
 
@@ -71,10 +71,12 @@ if scenario:
     if "selected_scenario" in st.session_state and st.session_state["selected_scenario"] != scenario:
         # Clear the report section when scenario changes
         st.session_state["report"] = ""
+        st.session_state["code"] = ""
 
     # Check if data for the selected scenario is already in session state
-    if "data" not in st.session_state or "problem_statement" not in st.session_state or st.session_state[
-        "selected_scenario"] != scenario:
+    if "data" not in st.session_state \
+            or "problem_statement" not in st.session_state \
+            or st.session_state["selected_scenario"] != scenario:
         # Show spinner while fetching predictions
         with st.spinner('Fetching predictions...'):
             st.session_state["predictions"], st.session_state["data"], st.session_state[
@@ -99,27 +101,30 @@ if scenario:
     problem_statement_area = st.text_area("Problem Statement", problem_statement, height=300)
 
     st.subheader("Generated Report")
-    report = st.session_state.get("report", "This is the generated report based on the scenario and predictions.")
-    report_area = st.text_area("Report", report, height=300)
+    report = st.session_state.get("report", "")
+    code = st.session_state.get("code", "")
+    # report_area = st.text_area("Report", report, height=300)
+    st.code(code, language='python')
     st.markdown(
-            """
-            <div style="
-                background-color: #f9f9f9;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-            ">
-                <h3 style="color: #2c3e50;">Result:</h3>
-                <p style="font-size: 16px; color: #34495e;">
-                    {}</p>
-            </div>
-            """.format(str(report)),
-            unsafe_allow_html=True
-        )
+        """
+        <div style="
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        ">
+            <h3 style="color: #2c3e50;">Result:</h3>
+            <p style="font-size: 16px; color: #34495e;">
+                {}</p>
+        </div>
+        """.format(str(report)),
+        unsafe_allow_html=True
+    )
 
     # Button to trigger optimization (generating the report)
     if st.button("Optimize"):
         statement_for_scenario = problem_statement_area
-        report = generate_report_for_scenario(scenario, statement_for_scenario)
+        report, code = generate_report_for_scenario(scenario, statement_for_scenario)
         st.session_state["report"] = report  # Store the generated report in session state
+        st.session_state["code"] = code
         st.rerun()  # Rerun the script to update the report text area with the new report
