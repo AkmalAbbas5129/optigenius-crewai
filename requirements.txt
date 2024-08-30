@@ -7,6 +7,7 @@ langchain_core
 langchain_experimental
 langchain_openai
 streamlit
+streamlit-ace
 crewai
 crewai_tools
 python-dotenv
