@@ -156,7 +156,7 @@ def report_writer(state: AgentState) -> AgentState:
     {code_execution_result}
     
     Report:
-    [Write report here to show beautifully in streamlit format]
+    [Write report here to show beautifully compatible in markdown format]
     """
 
     prompt = ChatPromptTemplate.from_messages(
