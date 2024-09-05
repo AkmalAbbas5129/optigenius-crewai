@@ -5,6 +5,8 @@ from typing import TypedDict
 from langchain_experimental.utilities import PythonREPL
 from langchain_core.pydantic_v1 import BaseModel, Field
 import streamlit as st
+from autogen import ConversableAgent
+from autogen.coding import LocalCommandLineCodeExecutor
 import os
 
 os.environ["AZURE_OPENAI_API_KEY"] = st.secrets["openai_api_key"]
@@ -91,9 +93,6 @@ def generate_pulp_code_for_problem(state: AgentState) -> AgentState:
 
 def code_executor(state: AgentState) -> AgentState:
     try:
-        from autogen import ConversableAgent
-        from autogen.coding import LocalCommandLineCodeExecutor
-
         # Create a temporary directory to store the code files.
         temp_dir = "code_temp"
 
@@ -138,7 +137,7 @@ def report_writer(state: AgentState) -> AgentState:
     constraints. Also he has given you the execution result of the code. 
 
     1. In report explain the Given data and what is intended by the given data
-    2. Explain the solution and calculations.
+    2. Explain the solution and calculations in plain english.
     3. Write Conclusion with respect to objective by explaining problem statement and constraints.
     4. Give suggestions as an expert.
 
@@ -401,6 +400,24 @@ def generate_report_for_scenario(scenario, problem_statement):
         report, code = supplier_risk_optimization(scenario, problem_statement)
 
     return report, code
+
+
+def execute_code(code):
+    temp_dir = "code_temp"
+    # Create a local command line code executor.
+    executor = LocalCommandLineCodeExecutor(
+        timeout=10,  # Timeout for each code execution in seconds.
+        work_dir=temp_dir,  # Use the temporary directory to store the code files.
+    )
+
+    # Create an agent with code executor configuration.
+    code_executor_agent = ConversableAgent(
+        "code_executor_agent",
+        llm_config=False,  # Turn off LLM for this agent.
+        code_execution_config={"executor": executor},  # Use the local command line code executor.
+    )
+    reply = code_executor_agent.generate_reply(messages=[{"role": "user", "content": code}])
+    return reply
 
 
 if __name__ == "__main__":
