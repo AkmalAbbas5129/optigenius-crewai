@@ -124,23 +124,23 @@ else:
     st.subheader("Code")
     code = st_ace(value=code, language="python", theme="monokai", height=500)
     # Centralize the "Run Code" button below the code editor
-    if st.button("Run Code"):
-        code_execution = execute_code(code)
-        explanation = explain_solution(problem_statement, code_execution)
-        st.markdown(
-            f"""
-                    <div style="
-                        background-color: #f9f9f9;
-                        padding: 20px;
-                        border-radius: 10px;
-                        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-                    ">
-                        <p style="font-size: 16px; color: #34495e;">
-                            {explanation}</p>
-                    </div>
-                    """,
-            unsafe_allow_html=True
-        )
+    # if st.button("Run Code"):
+    #     code_execution = execute_code(code)
+    #     explanation = explain_solution(problem_statement, code_execution)
+    #     st.markdown(
+    #         f"""
+    #                 <div style="
+    #                     background-color: #f9f9f9;
+    #                     padding: 20px;
+    #                     border-radius: 10px;
+    #                     box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    #                 ">
+    #                     <p style="font-size: 16px; color: #34495e;">
+    #                         {explanation}</p>
+    #                 </div>
+    #                 """,
+    #         unsafe_allow_html=True
+    #     )
 
     st.subheader("Optimization Report")
     st.markdown(
