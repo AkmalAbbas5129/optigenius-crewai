@@ -77,7 +77,7 @@ if not scenario:
     # Display a large GIF and image with instructions when no scenario is selected
     st.image("https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/001/809/881/datas/original.gif",
              use_column_width=True)  # Replace with your GIF URL
-    st.image("supply_chain.png", caption="Supply Chain Overview", use_column_width=True)
+    # st.image("supply_chain.png", caption="Supply Chain Overview", use_column_width=True)
 
     st.markdown("""
     ### How to Use the Application:
