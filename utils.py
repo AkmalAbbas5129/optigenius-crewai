@@ -17,33 +17,121 @@ azure_llm = AzureChatOpenAI(
 )
 
 
-def generate_optimization(scenario, data):
+def generate_pulp_code_for_problem(optimization_task, problem_statment, objective, constraint, data):
     sys_prompt = """
-    You are of supply chain who can generate problem statement, objective and constraints according to 
-    {problem}.
-    I will give you data in python dictionary and then you will only generate following information and nothing else.
+    Act as a Python developer. Write a code to solve optimization task using PuLP library.
+    Must ensure that the code is properly formatted and wrapped according to Python REPL executor.
+    Only use variables defined in the code and make sure there is no syntax/logical errors.
+    Always recheck the code to fix error. 
+    If there is an error arise in your code i will fine you 1000$ and will sue you.
+    Just output code and nothing else.
 
-    1. Given Data
-    2. Problem statement
-    3. Objective
-    4. Constraints
-
+    Following is the optimization task:
+    Optimization Task:
+    {optimization_task}
+    
     Data:
     {data}
 
-    Output should follow this format
-
-    Given Data:
-    [Write data here in natural language]
-
     Problem Statement:
-    [Please write problem statement according to given data which is being faced]
-
+    {problem_statement}
+    
     Objective:
-    [Objective to optimize in question format]
+    {objective}
+    
+    Constraint:
+    {constraint}
 
-    Constraints:
-    [List of Constraints]
+    Code:
+    [Write code here]
+    """
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                sys_prompt,
+            ),
+            # ("human", "{input}"),
+        ]
+    )
+
+    chain = prompt | azure_llm
+
+    code = chain.invoke(
+        {
+            "optimization_task": optimization_task,
+            "problem_statement": problem_statment,
+            "objective": objective,
+            "constraint": constraint,
+            "data": data
+        }
+    )
+
+    code = code.content
+
+    return code
+
+#then you will switch role to
+    # being an expert writer and will write the report and conclusion in such a way that layman can understand it.
+    # Please write your responses in concise and understandable way and no longer text.
+def solve_optimization_problem(problem_statement, objective, constraints, data):
+    # 4. There should be no calculations in the report just text writings.
+    template_string = """
+    I want you to act like an Expert Mathematics and Linear Programming Expert who solves optimization 
+    problems computationally and the calculations are perfect everytime you solve something.
+    Following are the details of the optimization problem. Your job is to understand the problem
+    with the help of problem statement, objective to solve and constraints which needs to be followed.
+    After understanding please perform the calculation based on the provided data like an expert and find solution to the problem.
+    Once the calculation and optimal solution is found, You will output the results in html format. Keep the results on top and then
+    explain the solution. Don't write the problem statement, objetive and constraint in the solution just use them to solve the problem.
+
+    Provided Data:
+    {data}
+    
+    Problem Statement: {problem_statement}
+    Objective to solve: {objective}
+    Constraints: {constraints}
+    
+    Please follow the following guidelines and you will be punished if you will not follow
+    the guidelines
+
+    1. Recheck the calculation 2-3 times and fix if there is any miscalculation.
+    2. Your calculations will always be correct.
+    3. Do not output anything extra from your own.
+    4. Solution to the answer should be written in a format and language which is easy to understand by anyone.
+
+
+    Solution Answer in HTML format:
+    [Result will be written here]
+    [Solution Explanation here]
+    """
+    prompt_template = ChatPromptTemplate.from_template(template_string)
+
+    chain = prompt_template | azure_llm
+
+    generated_answer = chain.invoke({
+        "problem_statement": problem_statement,
+        "objective": objective,
+        "constraints": constraints,
+        "data": data
+    })
+    print(generated_answer.content)
+    return generated_answer.content
+
+
+def generate_optimization(scenario, data):
+    sys_prompt = """
+    I will give you a data which has been predicted based on a scenario. 
+    Just Output data in html format and nothing else. Also don't enclose output in any quotes.
+    
+    Scenario:
+    {problem}
+    
+    Data:
+    {data}
+    
+    Markdown:
     """
     prompt = ChatPromptTemplate.from_messages(
         [
