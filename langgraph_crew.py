@@ -7,6 +7,11 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 import streamlit as st
 from autogen import ConversableAgent
 from autogen.coding import LocalCommandLineCodeExecutor
+from textgrad.engine import get_engine
+from textgrad import Variable
+from textgrad.optimizer import TextualGradientDescent
+from textgrad.loss import TextLoss
+import textgrad as tg
 import os
 
 os.environ["AZURE_OPENAI_API_KEY"] = st.secrets["openai_api_key"]
@@ -14,6 +19,7 @@ os.environ["AZURE_OPENAI_ENDPOINT"] = st.secrets["azure_endpoint"]
 os.environ["AZURE_OPENAI_API_VERSION"] = st.secrets["api_version"]
 os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"] = st.secrets["deployment_name"]
 os.environ["OPENAI_MODEL_NAME"] = "gpt-4o"
+os.environ["AZURE_OPENAI_API_BASE"] = st.secrets["azure_endpoint"]
 
 # Initialize Azure OpenAI LLM
 azure_llm = AzureChatOpenAI(
@@ -126,31 +132,80 @@ def code_executor(state: AgentState) -> AgentState:
     #     print(f"Exception arised in code executer node: {ex}")
 
 
+# def report_writer(state: AgentState) -> AgentState:
+#     sys_prompt = """
+#     You are an expert in writing reports in such a way that any one who reads it can easily understand it.
+#     Please use proper formatting and easy to understand vocabulary to write a report. Always use plain english and
+#     not use any latex or other expressions to show calculations.
+#
+#     One of your sub ordinate has received an optimization problem and he has used the PuLP library to
+#     solve the optimization problem. Now he is giving you the optimization problem, problem statement, objective and
+#     constraints. Also he has given you the execution result of the code.
+#
+#     1. In report explain the Given data and what is intended by the given data
+#     2. Explain the solution and calculations in plain english.
+#     3. Write Conclusion with respect to objective by explaining problem statement and constraints.
+#     4. Give suggestions as an expert.
+#
+#     Please write a report according to following.
+#
+#     Optimization Problem:
+#     {optimization}
+#
+#     Problem Statements,Objective and Constraint:
+#     {problem}
+#
+#     Result of Code Execution according to problem:
+#     {code_execution_result}
+#
+#     Report:
+#     [Write report here to show beautifully compatible in markdown format]
+#     """
+#
+#     prompt = ChatPromptTemplate.from_messages(
+#         [
+#             (
+#                 "system",
+#                 sys_prompt,
+#             ),
+#             # ("human", "{input}"),
+#         ]
+#     )
+#
+#     problem_statement = state["problem_statement"]
+#     optimization_task = state["optimization_task"]
+#     code_result = state["optimization_answer"]
+#     chain = prompt | azure_llm
+#
+#     code = chain.invoke(
+#         {
+#             "optimization": optimization_task,
+#             "problem": problem_statement,
+#             "code_execution_result": code_result
+#         }
+#     )
+#
+#     state["report"] = code.content
+#
+#     return state
+
 def report_writer(state: AgentState) -> AgentState:
     sys_prompt = """
     You are an expert in writing reports in such a way that any one who reads it can easily understand it.
     Please use proper formatting and easy to understand vocabulary to write a report. Always use plain english and 
     not use any latex or other expressions to show calculations.
 
-    One of your sub ordinate has received an optimization problem and he has used the PuLP library to 
-    solve the optimization problem. Now he is giving you the optimization problem, problem statement, objective and 
-    constraints. Also he has given you the execution result of the code. 
-
-    1. In report explain the Given data and what is intended by the given data
-    2. Explain the solution and calculations in plain english.
-    3. Write Conclusion with respect to objective by explaining problem statement and constraints.
-    4. Give suggestions as an expert.
-
-    Please write a report according to following.
-
+    I will give you optimization problem and answer to the problem. You will write a report to explain the results to the
+    end user so that they can understand it easily. One thing to remeber always write answer to the top.
+    
     Optimization Problem:
     {optimization}
 
-    Problem Statements,Objective and Constraint:
+    Problem Statements,Objective, Constraints and Data:
     {problem}
 
-    Result of Code Execution according to problem:
-    {code_execution_result}
+    Result:
+    {result}
 
     Report:
     [Write report here to show beautifully compatible in markdown format]
@@ -175,11 +230,12 @@ def report_writer(state: AgentState) -> AgentState:
         {
             "optimization": optimization_task,
             "problem": problem_statement,
-            "code_execution_result": code_result
+            "result": code_result
         }
     )
 
-    state["report"] = code.content
+    # state["report"] = code.content
+    state["report"] = code_result
 
     return state
 
@@ -257,18 +313,19 @@ def fix_code(state: AgentState) -> AgentState:
     problem_statement = state["problem_statement"]
 
     system = """
-    I want you to act like an Expert Mathematics and Linear Programming Expert who solves optimization 
+    I want you to act like an Expert Mathematics and Linear Programming Expert who solves optimization
     problems computationally and the calculations are perfect everytime you solve something.
     Following are the details of the optimization problem. Your job is to understand the problem
-    with the help of problem statement, objective to solve and constraints which needs to be followed.
-    After understanding please perform the calculation like an expert and find solution to the problem.
+    with the help of problem statement, objective to solve, constraints which needs to be followed according to the data
+    provided to you.
+    After understanding please perform the calculation like an expert and find solution.
     you will output answer to the objective and nothing else."""
 
     human_message = """
     Optimization task:
     {task}
 
-    Problem Statement,Objective and Constraint:
+    Problem Statement,Objective, Constraint and Data:
     {problem}
 
     Answer:
@@ -325,6 +382,55 @@ def fix_code(state: AgentState) -> AgentState:
     #         "code": code
     #     }
     # )
+
+# def fix_code(state: AgentState) -> AgentState:
+#     optimization_task = state["optimization_task"]
+#     problem_statement = state["problem_statement"]
+#
+#     tg.set_backward_engine(f"azure-{st.secrets['deployment_name']}", override=True)
+#
+#     # Step 1: Get an initial response from an LLM.
+#     model = tg.BlackboxLLM(f"azure-{st.secrets['deployment_name']}")
+#     question_string = problem_statement
+#
+#     question = tg.Variable(question_string,
+#                            role_description="Linear optimization problem question to the LLM, just solve the problem "
+#                                             "and give answer in natural language",
+#                            requires_grad=False)
+#
+#     answer = model(question)
+#     print(f"\n\n\nFirst Answer {answer}\n\n\n")
+#
+#     answer.set_role_description("Act as an Expert Mathmatician and Linear optimization problem solver and solve the "
+#                                 "problem")
+#
+#     # Step 2: Define the loss function and the optimizer, just like in PyTorch!
+#     # Here, we don't have SGD, but we have TGD (Textual Gradient Descent)
+#     # that works with "textual gradients".
+#     optimizer = tg.TGD(parameters=[answer])
+#     evaluation_instruction = (f"Here's an optimization problem: {question_string}. "
+#                               "Solve and Evaluate any given answer to this question, "
+#                               "be smart, logical, and very critical. "
+#                               "Provide the optimized answer")
+#
+#     # TextLoss is a natural-language specified loss function that describes
+#     # how we want to evaluate the reasoning.
+#     loss_fn = tg.TextLoss(evaluation_instruction)
+#
+#     # Step 3: Do the loss computation, backward pass, and update the punchline.
+#     # Exact same syntax as PyTorch!
+#     loss = loss_fn(answer)
+#     loss.backward()
+#     optimizer.step()
+#
+#     print(answer)
+#     #
+#     # engine = get_engine(engine_name=f"azure-{st.secrets['deployment_name']}")
+#     # print(engine.generate("Hello how are you?"))
+#     # print(result.content)
+#     state["optimization_answer"] = answer
+#
+#     return state
 
 
 def evaluator_node(state: AgentState) -> AgentState:
