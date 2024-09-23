@@ -16,7 +16,7 @@ def generate_customer_order_fulfillment_predictions(num_customers=2, num_warehou
     customer_demand = np.random.randint(50, 150, size=num_customers)
 
     # Generate random warehouse supplies (in units)
-    warehouse_ids = [f"Warehouse_{j + 1}" for j in range(num_warehouses)]
+    warehouse_ids = [f"Warehouse_{fake.city()}" for j in range(num_warehouses)]
     warehouse_supply = np.random.randint(100, 300, size=num_warehouses)
 
     # Generate random shipping costs (in USD) from each warehouse to each customer
@@ -31,11 +31,7 @@ def generate_customer_order_fulfillment_predictions(num_customers=2, num_warehou
 
     objective = "Minimize the total shipping cost (in USD) while fulfilling all customer orders (in units)."
 
-    constraints = [
-        "1. Each customer's demand (in units) must be fully satisfied.",
-        "2. Each warehouse can only ship products up to its available supply (in units).",
-        "3. Shipping costs vary between different warehouse-customer pairs (in USD)."
-    ]
+    constraints ="""1. Each customer's demand (in units) must be fully satisfied.\n2. Each warehouse can only ship products up to its available supply (in units).\n3. Shipping costs vary between different warehouse-customer pairs (in USD)."""
 
     # Create individual DataFrames
     demand_df = pd.DataFrame({
