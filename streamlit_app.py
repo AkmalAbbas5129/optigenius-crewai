@@ -66,7 +66,7 @@ st.set_page_config(layout="wide")
 
 # Sidebar with Logo and Scenario Dropdown
 with st.sidebar:
-    # st.image("system_nobg.png", caption="System LTD.", width=200)
+    st.image("system_nobg.png", caption="", width=300)
     st.header("Supply Chain Scenario")
 
     # Scenario Dropdown with Custom Scenario Option
