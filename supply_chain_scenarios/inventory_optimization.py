@@ -30,13 +30,13 @@ def generate_inventory_optimization_predictions(num_products=5, num_warehouses=3
     constraints = """1. Inventory levels should meet the forecasted demand.\n2. Each warehouse has a maximum storage capacity.\n3. Holding costs must be minimized."""
 
     # Create DataFrames
-    holding_costs_df = pd.DataFrame(holding_costs, index=product_names, columns=['Holding Cost per Unit'])
+    holding_costs_df = pd.DataFrame(holding_costs, index=product_names, columns=['Holding Cost per Unit in USD'])
     capacities_df = pd.DataFrame(capacities, index=warehouse_names, columns=['Capacity'])
     demand_forecast_df = pd.DataFrame(demand_forecast, columns=warehouse_names, index=product_names)
 
     # Create a dictionary to hold all data
     data_in_format = {
-        'Holding Costs': holding_costs_df,
+        'Holding Costs in USD': holding_costs_df,
         'Warehouse Capacities': capacities_df,
         'Demand Forecast': demand_forecast_df
     }
