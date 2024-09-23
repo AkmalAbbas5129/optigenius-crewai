@@ -101,7 +101,7 @@ def solve_optimization_problem(problem_statement, objective, constraints, data):
     2. Your calculations will always be correct.
     3. Do not output anything extra from your own.
     4. Solution to the answer should be written in a format and language which is easy to understand by anyone.
-    5. If there are table to be shown in the solution answer than format them with beautiful formatting with contrast to black background.
+    5. If there are table to be shown in the solution answer than format them with beautiful formatting with text as white and background transparent.
 
 
     Solution Answer in HTML format:
