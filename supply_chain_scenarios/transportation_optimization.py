@@ -26,11 +26,7 @@ def generate_transportation_optimization_predictions(num_customers=5, num_wareho
 
     objective = "Minimize the total transportation cost while meeting delivery deadlines and customer demands."
 
-    constraints = [
-        "1. Each route has a cost and capacity limit.",
-        "2. Delivery deadlines must be met.",
-        "3. The total amount shipped must meet customer demand."
-    ]
+    constraints ="""1. Each route has a cost and capacity limit.\n2. Delivery deadlines must be met.\n3. The total amount shipped must meet customer demand."""
 
     # Create DataFrames
     shipping_costs_df = pd.DataFrame(shipping_costs, columns=warehouse_names, index=customer_names)
