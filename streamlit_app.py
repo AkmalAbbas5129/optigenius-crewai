@@ -83,7 +83,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-if not scenario:
+if scenario == "Select Optimization Scenario":
     st.markdown(
         """
         <div style='display: flex; justify-content: center;'>
