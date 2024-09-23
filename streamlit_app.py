@@ -84,7 +84,7 @@ if scenario == "Select Optimization Scenario":
 else:
     # For Custom Scenario - Handle CSV upload and data
     if scenario == "Custom Scenario":
-        st.warning("Please upload CSVs and name the scenario to proceed.")
+        st.warning("Please upload CSVs to proceed.")
 
         # Handle custom CSV upload
         uploaded_files = st.file_uploader("Upload CSV files", accept_multiple_files=True, type=["csv"])
