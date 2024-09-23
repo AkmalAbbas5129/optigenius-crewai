@@ -72,19 +72,20 @@ def generate_pulp_code_for_problem(optimization_task, problem_statment, objectiv
 
     return code
 
-#then you will switch role to
-    # being an expert writer and will write the report and conclusion in such a way that layman can understand it.
-    # Please write your responses in concise and understandable way and no longer text.
+
+# then you will switch role to
+# being an expert writer and will write the report and conclusion in such a way that layman can understand it.
+# Please write your responses in concise and understandable way and no longer text.
 def solve_optimization_problem(problem_statement, objective, constraints, data):
     # 4. There should be no calculations in the report just text writings.
-    template_string = """
-    I want you to act like an Expert Mathematics and Linear Programming Expert who solves optimization 
-    problems computationally and the calculations are perfect everytime you solve something.
-    Following are the details of the optimization problem. Your job is to understand the problem
-    with the help of problem statement, objective to solve and constraints which needs to be followed.
-    After understanding please perform the calculation based on the provided data like an expert and find solution to the problem.
-    Once the calculation and optimal solution is found, You will output the results in html format. Keep the results on top and then
-    explain the solution. Don't write the problem statement, objetive and constraint in the solution just use them to solve the problem.
+    template_string = """I want you to act like an Expert Mathematics and Linear Programming Expert who solves 
+    optimization problems computationally and the calculations are perfect everytime you solve something. Following 
+    are the details of the optimization problem. Your job is to understand the problem with the help of problem 
+    statement, objective to solve and constraints which needs to be followed. After understanding please perform the 
+    calculation based on the provided data like an expert and find solution to the problem. Once the calculation and 
+    optimal solution is found, You will output the results in html format. Keep the results on top and then explain 
+    the solution. Don't write the problem statement, objetive and constraint in the solution just use them to solve 
+    the problem. Never enclose the output with ```html and ```
 
     Provided Data:
     {data}
@@ -100,6 +101,7 @@ def solve_optimization_problem(problem_statement, objective, constraints, data):
     2. Your calculations will always be correct.
     3. Do not output anything extra from your own.
     4. Solution to the answer should be written in a format and language which is easy to understand by anyone.
+    5. If there are table to be shown in the solution answer than format them with beautiful formatting with contrast to black background.
 
 
     Solution Answer in HTML format:
