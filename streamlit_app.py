@@ -66,53 +66,16 @@ st.set_page_config(layout="wide")
 
 # Sidebar with Logo and Scenario Dropdown
 with st.sidebar:
-    st.image("system_nobg.png", caption="", width=300)
+    st.image("system_nobg.png", caption="System LTD.", width=300)
     st.header("Supply Chain Scenario")
 
     # Scenario Dropdown with Custom Scenario Option
     scenario = st.selectbox(
         "Select Scenario:",
-        ["", "Customer Order Fulfillment", "Demand-Supply Matching", "Supplier Risk Assessment", "Inventory Optimization", "Transportation Optimization", "Custom Scenario"],
+        ["Select Optimization Scenario", "Customer Order Fulfillment", "Demand-Supply Matching", "Supplier Risk Assessment", "Inventory Optimization", "Transportation Optimization", "Custom Scenario"],
         key="scenario"
     )
     # "Demand Forecasting"
-
-    # Optimize button under the dropdown
-    if scenario:
-        if scenario == "Custom Scenario":
-            custom_scenario_name, custom_data_in_format = handle_custom_scenario()
-
-            if custom_scenario_name and custom_data_in_format and st.button("Optimize Custom Scenario"):
-                # Store the custom scenario data in session state
-                # st.session_state["scenario"] = custom_scenario_name
-                st.session_state["data_in_format"] = custom_data_in_format
-
-                problem_statement = st.session_state.get("problem_statement", "")
-                objectives = st.session_state.get("objective", "")
-                constraint = st.session_state.get("constraints", "")
-                data_predicted = st.session_state.get("data_in_format", "")
-
-                report = solve_optimization_problem(problem_statement, objectives, constraint, data_predicted)
-                code = generate_pulp_code_for_problem(scenario, problem_statement, objectives, constraint,
-                                                      data_predicted)
-
-                st.session_state["report"] = report
-                st.session_state["code"] = code
-                st.rerun()
-
-        else:
-            if st.button("Optimize"):
-                problem_statement = st.session_state.get("problem_statement", "")
-                objectives = st.session_state.get("objective", "")
-                constraint = st.session_state.get("constraints", "")
-                data_predicted = st.session_state.get("data_in_format", "")
-
-                report = solve_optimization_problem(problem_statement, objectives, constraint, data_predicted)
-                code = generate_pulp_code_for_problem(scenario, problem_statement, objectives, constraint, data_predicted)
-
-                st.session_state["report"] = report
-                st.session_state["code"] = code
-                st.rerun()
 
 # Main Content Area
 st.markdown(
@@ -170,6 +133,44 @@ else:
     problem_statement_area = st.text_area("Problem Statement", problem_statement, height=200)
     objective_area = st.text_area("Objective", objective, height=200)
     constraint_area = st.text_area("Constraint", constraints, height=200)
+
+    # Optimize button under the dropdown
+    if scenario:
+        if scenario == "Custom Scenario":
+            custom_scenario_name, custom_data_in_format = handle_custom_scenario()
+
+            if custom_scenario_name and custom_data_in_format and st.button("Optimize Custom Scenario"):
+                # Store the custom scenario data in session state
+                # st.session_state["scenario"] = custom_scenario_name
+                st.session_state["data_in_format"] = custom_data_in_format
+
+                problem_statement = st.session_state.get("problem_statement", "")
+                objectives = st.session_state.get("objective", "")
+                constraint = st.session_state.get("constraints", "")
+                data_predicted = st.session_state.get("data_in_format", "")
+
+                report = solve_optimization_problem(problem_statement, objectives, constraint, data_predicted)
+                code = generate_pulp_code_for_problem(scenario, problem_statement, objectives, constraint,
+                                                      data_predicted)
+
+                st.session_state["report"] = report
+                st.session_state["code"] = code
+                st.rerun()
+
+        else:
+            if st.button("Optimize"):
+                problem_statement = st.session_state.get("problem_statement", "")
+                objectives = st.session_state.get("objective", "")
+                constraint = st.session_state.get("constraints", "")
+                data_predicted = st.session_state.get("data_in_format", "")
+
+                report = solve_optimization_problem(problem_statement, objectives, constraint, data_predicted)
+                code = generate_pulp_code_for_problem(scenario, problem_statement, objectives, constraint,
+                                                      data_predicted)
+
+                st.session_state["report"] = report
+                st.session_state["code"] = code
+                st.rerun()
 
     with st.expander("Code"):
         code = st.session_state.get("code", "")
