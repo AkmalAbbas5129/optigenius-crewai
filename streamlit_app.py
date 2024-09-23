@@ -126,17 +126,17 @@ else:
         code = st.session_state.get("code", "")
         code = st_ace(value=code, language="python", theme="monokai", height=500)
 
-        if st.button("Run Code"):
-            code_execution = execute_code(code)
-            explanation = explain_solution(problem_statement, code_execution)
-            st.markdown(
-                f"""
-                    <div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px;">
-                        <p style="font-size: 16px; color: #34495e;">{explanation}</p>
-                    </div>
-                    """,
-                unsafe_allow_html=True
-            )
+        # if st.button("Run Code"):
+        #     code_execution = execute_code(code)
+        #     explanation = explain_solution(problem_statement, code_execution)
+        #     st.markdown(
+        #         f"""
+        #             <div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px;">
+        #                 <p style="font-size: 16px; color: #34495e;">{explanation}</p>
+        #             </div>
+        #             """,
+        #         unsafe_allow_html=True
+        #     )
 
     with st.expander("Click Here To View Optimization Report"):
         report = st.session_state.get("report", "")
