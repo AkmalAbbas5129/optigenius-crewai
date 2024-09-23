@@ -10,7 +10,7 @@ def generate_transportation_optimization_predictions(num_customers=5, num_wareho
 
     # Generate random customer names and warehouse names
     customer_names = [f"Customer_{fake.first_name()}" for _ in range(num_customers)]
-    warehouse_names = [f"Warehouse_{j + 1}" for j in range(num_warehouses)]
+    warehouse_names = [f"Warehouse_{fake.city()}" for j in range(num_warehouses)]
 
     # Generate random shipping costs and capacities
     shipping_costs = np.random.uniform(1, 10, size=(num_customers, num_warehouses))
