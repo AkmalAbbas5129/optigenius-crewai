@@ -41,7 +41,7 @@ def get_dummy_predictions(scenario):
         st.session_state["selected_scenario"] = scenario
 
     return st.session_state["predicted_data"]["problem"], st.session_state["predicted_data"]["objective"], \
-           st.session_state["predicted_data"]["constraint"], st.session_state["predicted_data"]["data_in_format"]
+        st.session_state["predicted_data"]["constraint"], st.session_state["predicted_data"]["data_in_format"]
 
 
 # Set up the layout
@@ -82,7 +82,25 @@ if scenario == "Select Optimization Scenario":
     4. Click on **Optimize** to generate a detailed report and code.
     """)
 else:
-    if scenario != "Custom Scenario":
+    # For Custom Scenario - Handle CSV upload and data
+    if scenario == "Custom Scenario":
+        st.warning("Please upload CSVs and name the scenario to proceed.")
+
+        # Handle custom CSV upload
+        uploaded_files = st.file_uploader("Upload CSV files", accept_multiple_files=True, type=["csv"])
+
+        if uploaded_files:
+            st.session_state["custom_data_in_format"] = {}
+            for uploaded_file in uploaded_files:
+                df = pd.read_csv(uploaded_file)
+                st.session_state["custom_data_in_format"][uploaded_file.name] = df
+
+            st.success("CSV files uploaded successfully.")
+
+        # Set data_in_format for Custom Scenario
+        data_in_format = st.session_state.get("custom_data_in_format", {})
+    else:
+        # For predefined scenarios, fetch predictions
         if "data_in_format" not in st.session_state or st.session_state["selected_scenario"] != scenario:
             problem_statement, objective, constraints, data_in_format = get_dummy_predictions(scenario)
             st.session_state["problem_statement"] = problem_statement
@@ -90,22 +108,22 @@ else:
             st.session_state["constraints"] = constraints
             st.session_state["data_in_format"] = data_in_format
 
-        st.title(f"Scenario: {scenario}")
+        # Set data_in_format for predefined scenarios
+        data_in_format = st.session_state.get("data_in_format", {})
 
-    else:
-        st.warning("Please upload CSVs and name the scenario to proceed.")
-
-    # Retrieve from session state
-    problem_statement = st.session_state.get("problem_statement", "")
-    objective = st.session_state.get("objective", "")
-    constraints = st.session_state.get("constraints", "")
-    data_in_format = st.session_state.get("data_in_format", "")
-
-    with st.expander("Click here to view the predicted data"):
+    # Display the data (for both predefined and custom scenarios)
+    with st.expander("Click here to view the data"):
         if data_in_format:
             for name, df in data_in_format.items():
                 st.subheader(f"{name}")
                 st.dataframe(df)
+        else:
+            st.write("No data available. Please select a scenario or upload data.")
+
+    # Retrieve problem, objective, and constraint from session state or leave empty for custom scenario
+    problem_statement = st.session_state.get("problem_statement", "") if scenario != "Custom Scenario" else ""
+    objective = st.session_state.get("objective", "") if scenario != "Custom Scenario" else ""
+    constraints = st.session_state.get("constraints", "") if scenario != "Custom Scenario" else ""
 
     st.subheader("Optimization Problem")
     problem_statement_area = st.text_area("Problem Statement", problem_statement, height=200)
@@ -115,29 +133,20 @@ else:
     # Add spinner on optimization
     if st.button("Optimize"):
         with st.spinner("Calculating... Please wait..."):
-            report = solve_optimization_problem(problem_statement, objective, constraints, data_in_format)
-            code = generate_pulp_code_for_problem(scenario, problem_statement, objective, constraints, data_in_format)
+            report = solve_optimization_problem(problem_statement_area, objective_area, constraint_area, data_in_format)
+            code = generate_pulp_code_for_problem(scenario, problem_statement_area, objective_area, constraint_area,
+                                                  data_in_format)
 
             st.session_state["report"] = report
             st.session_state["code"] = code
             st.rerun()
 
+    # Code display expander
     with st.expander("Click Here To View Code"):
         code = st.session_state.get("code", "")
         code = st_ace(value=code, language="python", theme="monokai", height=500)
 
-        # if st.button("Run Code"):
-        #     code_execution = execute_code(code)
-        #     explanation = explain_solution(problem_statement, code_execution)
-        #     st.markdown(
-        #         f"""
-        #             <div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px;">
-        #                 <p style="font-size: 16px; color: #34495e;">{explanation}</p>
-        #             </div>
-        #             """,
-        #         unsafe_allow_html=True
-        #     )
-
+    # Report display expander
     with st.expander("Click Here To View Optimization Report"):
         report = st.session_state.get("report", "")
         st.html(report)
