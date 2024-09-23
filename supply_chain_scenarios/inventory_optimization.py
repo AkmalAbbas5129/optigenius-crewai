@@ -9,7 +9,7 @@ def generate_inventory_optimization_predictions(num_products=5, num_warehouses=3
     np.random.seed(seed)
 
     # Generate random product names and warehouse names
-    product_names = [f"Product_{fake.word()}" for _ in range(num_products)]
+    product_names = [f"Product_{i+1}" for i in range(num_products)]
     warehouse_names = [f"Warehouse_{j + 1}" for j in range(num_warehouses)]
 
     # Generate random holding costs and capacities
@@ -27,11 +27,7 @@ def generate_inventory_optimization_predictions(num_products=5, num_warehouses=3
 
     objective = "Minimize the total holding costs while maintaining sufficient inventory levels to meet customer demand."
 
-    constraints = [
-        "1. Inventory levels should meet the forecasted demand.",
-        "2. Each warehouse has a maximum storage capacity.",
-        "3. Holding costs must be minimized."
-    ]
+    constraints = """1. Inventory levels should meet the forecasted demand.\n2. Each warehouse has a maximum storage capacity.\n3. Holding costs must be minimized."""
 
     # Create DataFrames
     holding_costs_df = pd.DataFrame(holding_costs, index=product_names, columns=['Holding Cost per Unit'])
