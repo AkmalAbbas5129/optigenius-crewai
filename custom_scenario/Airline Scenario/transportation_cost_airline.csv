@@ -1,0 +1,7 @@
+Supplier_ID,Airport_ID,Transportation_Cost_Per_Unit
+S001,JFK,2
+S001,LAX,3
+S002,JFK,4
+S002,LAX,3
+S003,JFK,3
+S003,LAX,2

@@ -1,0 +1,5 @@
+Supplier_ID,Warehouse_ID,Transportation_Cost_Per_Unit_in_dollar
+S001,W001,5
+S001,W002,6
+S002,W001,4
+S002,W002,5

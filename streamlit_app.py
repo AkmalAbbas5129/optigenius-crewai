@@ -65,15 +65,15 @@ st.markdown(
 )
 
 if scenario == "Select Optimization Scenario":
-    st.markdown(
-        """
-        <div style='display: flex; justify-content: center;'>
-            <img src='https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/001/809/881/datas/original.gif' 
-                 style='width: 50%; max-width: 600px;' />
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # st.markdown(
+    #     """
+    #     <div style='display: flex; justify-content: center;'>
+    #         <img src='https://d112y698adiu2z.cloudfront.net/photos/production/software_photos/001/809/881/datas/original.gif'
+    #              style='width: 50%; max-width: 600px;' />
+    #     </div>
+    #     """,
+    #     unsafe_allow_html=True
+    # )
     st.markdown("""
     ### How to Use the Application:
     1. **Select a Scenario** from the dropdown in the sidebar.

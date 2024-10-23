@@ -1,0 +1,7 @@
+Supplier_ID,Item_ID,Price_Per_Unit,Max_Supply_Units,Shelf_Life_Days
+S001,Meal,10,1000,3
+S001,Snack,5,500,7
+S002,Meal,12,800,5
+S002,Beverage,6,600,20
+S003,Snack,4,700,6
+S003,Beverage,7,500,15

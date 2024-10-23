@@ -1,0 +1,7 @@
+Supplier_ID,Product_ID,Price_Per_Unit,Max_Supply_Units,Lead_Time_Days
+S001,P001,20,150,5
+S001,P002,18,200,4
+S001,P003,25,100,6
+S002,P001,22,100,3
+S002,P002,19,150,5
+S002,P003,24,120,7

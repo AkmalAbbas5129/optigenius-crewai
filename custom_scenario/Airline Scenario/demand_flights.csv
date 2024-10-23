@@ -1,0 +1,5 @@
+Airport_ID,Item_ID,Demand_Units
+JFK,Meal,500
+JFK,Snack,200
+LAX,Beverage,400
+LAX,Meal,250
