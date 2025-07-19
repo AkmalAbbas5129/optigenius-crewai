@@ -11,7 +11,7 @@ crewai
 crewai_tools
 python-dotenv
 langgraph
-pyautogen
+ag2
 gurobipy
 Faker
 textgrad
